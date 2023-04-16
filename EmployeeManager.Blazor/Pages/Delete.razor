@@ -1,0 +1,103 @@
+﻿@page "/Employees/Delete/{EmployeeID:int}"
+@inject NavigationManager NM
+@inject IEmployeeRepository ER
+@attribute [Authorize(Roles = "Manager")]
+
+@code {
+    [Parameter]
+    public int EmployeeID { get; set; }
+
+    Employee EmployeeModel { get;set; }
+    string Message { get; set; }
+
+    protected override void OnInitialized()
+    {
+        EmployeeModel = ER.SelectByID(EmployeeID);
+    }
+
+    private void OnDeleteClick()
+    {
+        ER.Delete(EmployeeID);
+        Message = "Employee Deleted Successfully";
+        NM.NavigateTo($"/employees/list?Message={Message}");
+    }
+}
+
+<h2>Delete Employee</h2>
+<h3 class="message">Warning: You are about to delete an employee</h3>
+
+<form>
+
+    <table border="0" cellpadding="10">
+        <tr>
+            <td>
+                <label class="right">Employee ID</label>
+            </td>
+            <td>@EmployeeModel.EmployeeID</td>
+        </tr>
+        <tr>
+            <td class="right">
+                <label for="FirstName">First Name</label>
+            </td>
+            <td>
+                @EmployeeModel.FirstName
+            </td>
+        </tr>
+        <tr>
+            <td class="right">
+                <label for="LastName">Last Name</label>
+            </td>
+            <td>
+                @EmployeeModel.LastName
+            </td>
+        </tr>
+        <tr>
+            <td class="right">
+                <label for="Title">Title</label>
+            </td>
+            <td>
+                @EmployeeModel.Title
+            </td>
+        </tr>
+        <tr>
+            <td class="right">
+                <label for="BirthDate">Birth Date</label>
+            </td>
+            <td>
+                @EmployeeModel.BirthDate.ToString("dd MMMM yyyy")
+            </td>
+        </tr>
+        <tr>
+            <td class="right">
+                <label for="HireDate">Hire Date</label>
+            </td>
+            <td>
+                @EmployeeModel.HireDate.ToString("dd MMMM yyyy")
+            </td>
+        </tr>
+        <tr>
+            <td class="rigth">
+                <label for="Country">Country</label>
+            </td>
+            <td>
+               @EmployeeModel.Country
+            </td>
+        </tr>
+        <tr>
+            <td class="right">
+                <label for="Notes">Notes</label>
+            </td>
+            <td>
+                @EmployeeModel.Notes
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="button" @onclick="OnDeleteClick">Delete</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<br />
+<a href="/employees/list">Back to Employee Listing</a>

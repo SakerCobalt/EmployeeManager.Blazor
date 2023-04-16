@@ -1,0 +1,58 @@
+﻿@page "/"
+@page "/Employees/List"
+
+@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager NM
+@inject IEmployeeRepository ER
+@attribute [Authorize(Roles ="Manager")]
+
+<h2>List of Employees</h2>
+<h3 class="message">@Message</h3>
+<a href="/employees/insert" class="linkbutton">Insert</a>
+
+<br />
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>EmployeeID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Title</th>
+            <th>Country</th>
+            <th colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Employees)
+        {
+        <tr>
+                <td>@item.EmployeeID</td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.Title</td>
+                <td>@item.Country</td>
+                <td colspan="2">
+                    <a href="/employees/update/@item.EmployeeID" class="linkbutton">Update</a>
+                    <a href="/employees/delete/@item.EmployeeID" class="linkbutton">Delete</a>
+                </td>
+        </tr>
+            
+        }
+    </tbody>
+</table>
+
+@code {
+    List<Employee> Employees = new List<Employee>();
+    string Message { get; set; }
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NM.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).Count > 0)
+        {
+            Message = QueryHelpers.ParseQuery(uri.Query).First().Value;
+        }
+
+        Employees = ER.SelectAll();
+    }
+}
